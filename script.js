@@ -13,14 +13,9 @@ const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
 
 // -------------------- SESSION STORAGE --------------------
-function initializeCart() {
-  if (!window.sessionStorage.getItem("cart")) {
-    window.sessionStorage.setItem("cart", JSON.stringify([]));
-  }
-}
-
 function getCart() {
-  return JSON.parse(window.sessionStorage.getItem("cart"));
+  const cart = window.sessionStorage.getItem("cart");
+  return cart ? JSON.parse(cart) : [];
 }
 
 function saveCart(cart) {
@@ -34,14 +29,14 @@ function renderProducts() {
   products.forEach(function (product) {
     const li = document.createElement("li");
 
-    const btn = document.createElement("button");
-    btn.textContent = "Add to Cart";
-    btn.onclick = function () {
+    const button = document.createElement("button");
+    button.textContent = "Add to Cart";
+    button.onclick = function () {
       addToCart(product.id);
     };
 
     li.textContent = `${product.name} - $${product.price} `;
-    li.appendChild(btn);
+    li.appendChild(button);
 
     productList.appendChild(li);
   });
@@ -62,6 +57,7 @@ function renderCart() {
 // -------------------- ADD TO CART --------------------
 function addToCart(productId) {
   const cart = getCart();
+
   const product = products.find(function (p) {
     return p.id === productId;
   });
@@ -80,14 +76,13 @@ function addToCart(productId) {
 
 // -------------------- CLEAR CART --------------------
 function clearCart() {
-  saveCart([]); // IMPORTANT: tests expect empty array, not removeItem
+  saveCart([]);
   renderCart();
 }
 
-// -------------------- EVENT LISTENERS --------------------
+// -------------------- EVENT LISTENER --------------------
 clearCartBtn.onclick = clearCart;
 
 // -------------------- INITIAL LOAD --------------------
-initializeCart();
 renderProducts();
 renderCart();
